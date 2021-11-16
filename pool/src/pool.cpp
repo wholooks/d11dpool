@@ -42,6 +42,6 @@ int main(int argc, char* argv[])
     }
 
     // TODO(kp): Improve arg parsing and remove passing char ptrs
-    node node_(argv[1], argv[2]);
-    node_.start(argv[3], argv[4]);
+    node node_ { std::string(argv[1]), std::string(argv[2]) };
+    node_.start(std::string(argv[3]), std::string(argv[4]));
 }

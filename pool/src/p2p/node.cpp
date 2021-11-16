@@ -32,7 +32,8 @@ using boost::asio::use_awaitable;
 namespace bp {
 namespace p2p {
 
-    node::node(char* listen_address, char* listen_port)
+    node::node(
+        const std::string& listen_address, const std::string& listen_port)
     {
         auto listen_endpoint = *tcp::resolver(io_context_)
                                     .resolve(listen_address, listen_port,
@@ -43,7 +44,8 @@ namespace p2p {
 
     // TODO: guard against duplicate connection creation to the same
     // peer. One in response to incoming connection other via this call.
-    awaitable<void> node::connect_to_peers(char* host, char* port)
+    awaitable<void> node::connect_to_peers(
+        const std::string& host, const std::string& port)
     {
         auto peer_endpoint = *tcp::resolver(io_context_).resolve(host, port);
         auto client_socket = tcp::socket(io_context_);
@@ -77,7 +79,7 @@ namespace p2p {
         }
     }
 
-    void node::start(char* peer_host, char* peer_port)
+    void node::start(const std::string& peer_host, const std::string& peer_port)
     {
         co_spawn(io_context_, listen(*acceptor_), detached);
 
@@ -92,7 +94,13 @@ namespace p2p {
         threads_.join_all();
     }
 
-    void node::stop() { }
+    void node::stop()
+    {
+        // TODO: Close all connections
+        // TODO: Stop all threads
+        std::cerr << "Stopped." << std::endl;
+        exit(0);
+    }
 
     // void node::add_connection(connection& con)
     // {

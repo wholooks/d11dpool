@@ -31,10 +31,11 @@ namespace bp {
 namespace p2p {
     class node : private boost::noncopyable {
     public:
-        node(char* listen_address, char* listen_port);
-        awaitable<void> connect_to_peers(char* host, char* port);
+        node(const std::string& listen_address, const std::string& listen_port);
+        awaitable<void> connect_to_peers(
+            const std::string& host, const std::string& port);
         awaitable<void> listen(tcp::acceptor& acceptor);
-        void start(char* peer_host, char* peer_port);
+        void start(const std::string& peer_host, const std::string& peer_port);
         void stop();
         // void add_connection(connection& connection_);
         // void remove_connection(connection& connection_);

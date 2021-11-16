@@ -22,7 +22,7 @@
 
 using namespace bp;
 
-TEST(SHARE_TEST, CONSTRUCTOR__RETURNS_SHARE)
+TEST(ShareTest, ConstructorReturnsShare)
 {
     hash_digest work_hash = hash_literal(
         "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f");
@@ -33,7 +33,7 @@ TEST(SHARE_TEST, CONSTRUCTOR__RETURNS_SHARE)
     EXPECT_EQ(instance.work_hash(), work_hash);
 }
 
-TEST(SHARE_TEST, SERIALIZATION__SHOULD_DESERIALIZE)
+TEST(ShareTest, SerializationShouldDeserialize)
 {
     hash_digest work_hash = hash_literal(
         "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f");

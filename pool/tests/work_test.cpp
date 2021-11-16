@@ -23,7 +23,7 @@
 
 using namespace bp;
 
-TEST(WORK_TEST, CONSTRUCTOR__RETURNS_WORK)
+TEST(WorkTest, CconstructorReturnsWork)
 {
     hash_digest previous_block = hash_literal(
         "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f");
@@ -32,7 +32,7 @@ TEST(WORK_TEST, CONSTRUCTOR__RETURNS_WORK)
     EXPECT_EQ(instance.version(), 10);
 }
 
-TEST(WORK_TEST, SERIALIZATION__SHOULD_DESERIALIZE)
+TEST(WorkTest, SerializationShouldDeserialize)
 {
     hash_digest previous_block = hash_literal(
         "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f");
