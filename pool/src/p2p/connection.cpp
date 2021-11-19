@@ -35,13 +35,15 @@ namespace p2p {
     {
     }
 
+    connection::~connection() { LOG_DEBUG << "Destroying connection"; }
+
     awaitable<void> connection::send_to_peer(std::string message)
     {
         try {
             LOG_DEBUG << "Sending: " << message;
             co_await async_write(socket_, buffer(message), use_awaitable);
         } catch (const std::exception& e) {
-            LOG_ERROR << e.what();
+            LOG_ERROR << "In send_to_peer: " << e.what();
             socket_.close();
         }
     }
@@ -62,7 +64,7 @@ namespace p2p {
                 read_msg.erase(0, num_bytes_read);
             }
         } catch (const std::exception& e) {
-            LOG_ERROR << e.what();
+            LOG_ERROR << "In receive_from_peer: " << e.what();
             socket_.close();
         }
     }

@@ -23,7 +23,7 @@
 
 using namespace bp;
 
-TEST(WorkTest, CconstructorReturnsWork)
+TEST(WorkTest, ConstructorReturnsWork)
 {
     hash_digest previous_block = hash_literal(
         "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f");

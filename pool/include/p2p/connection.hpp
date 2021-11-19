@@ -29,7 +29,10 @@ namespace bp {
 namespace p2p {
     class connection : private boost::noncopyable {
     public:
+        using ptr = std::shared_ptr<connection>;
+
         connection(tcp::socket sock);
+        ~connection();
         awaitable<void> send_to_peer(std::string message);
         awaitable<void> receive_from_peer();
 

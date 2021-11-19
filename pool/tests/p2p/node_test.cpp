@@ -25,8 +25,19 @@ using namespace bp::p2p;
 
 TEST(NodeTest, ConstructorReturnsNode) { node("localhost", "9999"); }
 
-TEST(NodeTest, NormalStopShouldStopClealy)
+TEST(NodeTest, NormalStartStopShouldStopClealy)
 {
     node node_ { "localhost", "9999" };
-    EXPECT_EXIT(node_.stop(), testing::ExitedWithCode(0), "Stopped.");
+    node_.start("localhost", "9998");
+    //    EXPECT_EXIT(node_.stop(), testing::ExitedWithCode(0), "Stopped.");
 }
+
+// TEST(NodeTest, StartShouldCallAsynchConnectOnSocket) { }
+
+// TEST(NodeTest, StartShouldCallStartConnection) { }
+
+// TEST(NodeTest, StartConnectionShouldCreateConnection) { }
+
+// TEST(NodeTest, StartConnectionShouldCallReceiveFromPeer) { }
+
+// TEST(NodeTest, StartConnectionShouldCallSendToPeer) { }
