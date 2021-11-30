@@ -23,13 +23,18 @@
 using namespace bp;
 using namespace bp::p2p;
 
-TEST(NodeTest, ConstructorReturnsNode) { node("localhost", "9999"); }
+TEST(NodeTest, ConstructorReturnsNode)
+{
+    io_context io_context_;
+    node(io_context_, "localhost", "9999");
+}
 
 TEST(NodeTest, NormalStartStopShouldStopClealy)
 {
-    node node_ { "localhost", "9999" };
+    io_context io_context_;
+    node node_ { io_context_, "localhost", "9999" };
     node_.start("localhost", "9998");
-    //    EXPECT_EXIT(node_.stop(), testing::ExitedWithCode(0), "Stopped.");
+    EXPECT_EXIT(node_.stop(), testing::ExitedWithCode(0), "Stopped.");
 }
 
 // TEST(NodeTest, StartShouldCallAsynchConnectOnSocket) { }

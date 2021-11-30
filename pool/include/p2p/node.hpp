@@ -31,7 +31,8 @@ namespace bp {
 namespace p2p {
     class node : private boost::noncopyable {
     public:
-        node(const std::string& listen_address, const std::string& listen_port);
+        node(io_context& io_context_, const std::string& listen_address,
+            const std::string& listen_port);
         awaitable<void> connect_to_peer(
             const std::string& host, const std::string& port);
         awaitable<void> listen(tcp::acceptor& acceptor);
@@ -43,7 +44,7 @@ namespace p2p {
     private:
         awaitable<void> start_connection(tcp::socket client);
 
-        io_context io_context_;
+        io_context& io_context_;
         std::unique_ptr<tcp::acceptor> acceptor_;
 
         // protects add/remove connections
@@ -51,9 +52,6 @@ namespace p2p {
 
         // protected by connections_mutex_
         std::vector<connection::ptr> connections_;
-
-        // thread group to run io_context
-        boost::thread_group threads_;
     };
 
 }

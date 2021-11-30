@@ -32,8 +32,9 @@ using boost::asio::use_awaitable;
 namespace bp {
 namespace p2p {
 
-    node::node(
-        const std::string& listen_address, const std::string& listen_port)
+    node::node(io_context& io_context_, const std::string& listen_address,
+        const std::string& listen_port)
+        : io_context_(io_context_)
     {
         auto listen_endpoint = *tcp::resolver(io_context_)
                                     .resolve(listen_address, listen_port,
@@ -85,16 +86,11 @@ namespace p2p {
         signals.async_wait([&](auto, auto) { io_context_.stop(); });
 
         co_spawn(io_context_, connect_to_peer(peer_host, peer_port), detached);
-
-        for (unsigned i = 0; i < boost::thread::hardware_concurrency(); ++i)
-            threads_.create_thread(boost::bind(&io_context::run, &io_context_));
-        threads_.join_all();
     }
 
     void node::stop()
     {
         // TODO: Close all connections
-        // TODO: Stop all threads
         std::cerr << "Stopped." << std::endl;
         exit(0);
     }
