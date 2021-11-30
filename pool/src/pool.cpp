@@ -42,14 +42,9 @@ int main(int argc, char* argv[])
         LOG_ERROR << e.what();
     }
 
-    io_context context;
     // TODO(kp): Improve arg parsing and remove passing char ptrs
-    node node_ { context, std::string(argv[1]), std::string(argv[2]) };
-    node_.start(std::string(argv[3]), std::string(argv[4]));
+    node node_ { std::string(argv[1]), std::string(argv[2]) };
+    node_.setup_initial_peers(std::string(argv[3]), std::string(argv[4]));
 
-    // start asio io_context in threads
-    boost::thread_group threads_;
-    for (unsigned i = 0; i < boost::thread::hardware_concurrency(); ++i)
-        threads_.create_thread(boost::bind(&io_context::run, &context));
-    threads_.join_all();
+    node_.run();
 }

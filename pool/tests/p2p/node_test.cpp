@@ -23,17 +23,12 @@
 using namespace bp;
 using namespace bp::p2p;
 
-TEST(NodeTest, ConstructorReturnsNode)
-{
-    io_context io_context_;
-    node(io_context_, "localhost", "9999");
-}
+TEST(NodeTest, ConstructorReturnsNode) { node("localhost", "9999"); }
 
 TEST(NodeTest, NormalStartStopShouldStopClealy)
 {
-    io_context io_context_;
-    node node_ { io_context_, "localhost", "9999" };
-    node_.start("localhost", "9998");
+    node node_ { "localhost", "9999" };
+    node_.setup_initial_peers("localhost", "9998");
     EXPECT_EXIT(node_.stop(), testing::ExitedWithCode(0), "Stopped.");
 }
 

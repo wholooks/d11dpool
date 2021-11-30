@@ -32,9 +32,8 @@ using boost::asio::use_awaitable;
 namespace bp {
 namespace p2p {
 
-    node::node(io_context& io_context_, const std::string& listen_address,
-        const std::string& listen_port)
-        : io_context_(io_context_)
+    node::node(
+        const std::string& listen_address, const std::string& listen_port)
     {
         auto listen_endpoint = *tcp::resolver(io_context_)
                                     .resolve(listen_address, listen_port,
@@ -77,15 +76,25 @@ namespace p2p {
         co_await client_connection->send_to_peer("ping\r\n");
     }
 
-    void node::start(const std::string& peer_host, const std::string& peer_port)
+    void node::setup_initial_peers(
+        const std::string& peer_host, const std::string& peer_port)
     {
         co_spawn(io_context_, listen(*acceptor_), detached);
+        co_spawn(io_context_, connect_to_peer(peer_host, peer_port), detached);
+    }
 
+    void node::run()
+    {
         // brute force stop context for now.
         boost::asio::signal_set signals(io_context_, SIGINT, SIGTERM);
         signals.async_wait([&](auto, auto) { io_context_.stop(); });
 
-        co_spawn(io_context_, connect_to_peer(peer_host, peer_port), detached);
+        LOG_DEBUG << "Starting threads...";
+        // start asio io_context in threads
+        boost::thread_group threads_;
+        for (unsigned i = 0; i < boost::thread::hardware_concurrency(); ++i)
+            threads_.create_thread(boost::bind(&io_context::run, &io_context_));
+        threads_.join_all();
     }
 
     void node::stop()
