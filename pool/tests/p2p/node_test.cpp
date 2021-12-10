@@ -17,26 +17,68 @@
  * along with braidpool.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "p2p/node.hpp"
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <p2p/connection.hpp>
+#include <p2p/define.hpp>
+#include <p2p/node.hpp>
 
 using namespace bp;
 using namespace bp::p2p;
+using boost::asio::awaitable;
 
-TEST(NodeTest, ConstructorReturnsNode) { node("localhost", "9999"); }
+using ::testing::AtLeast;
+using ::testing::Return;
+
+// class mock_socket {
+//     io_context::executor_type ex_;
+//     std::byte* ptr_;
+//     std::size_t size_;
+//     io_context::executor_type get_executor() noexcept { return ex_; }
+//     template <class ConstBufferSequence, class Handler>
+//     void async_write_some(ConstBufferSequence cb, Handler&& h);
+// };
+
+class mock_connection : public connection {
+public:
+    mock_connection(tcp::socket socket)
+        : connection(std::move(socket))
+    {
+    }
+    MOCK_METHOD((awaitable<bool>), start, (), ());
+};
+
+using test_node = bp::p2p::node<tcp::socket, mock_connection>;
+
+TEST(NodeTest, ConstructorReturnsNode) { test_node("localhost", "9999"); }
 
 TEST(NodeTest, NormalStartStopShouldStopClealy)
 {
-    node node_ { "localhost", "9999" };
+    test_node node_ { "localhost", "9999" };
     node_.setup_initial_peers("localhost", "9998");
     EXPECT_EXIT(node_.stop(), testing::ExitedWithCode(0), "Stopped.");
 }
 
-// TEST(NodeTest, StartShouldCallAsynchConnectOnSocket) { }
+TEST(NodeTest, StartConnectionShouldCreateConnection)
+{
+    io_context io_context_;
+    tcp::socket socket_(io_context_);
+    auto connection_ = std::make_shared<connection>(std::move(socket_));
+    test_node node_ { "localhost", "9999" };
+    // EXPECT_CALL(*connection_, start()).Times(AtLeast(1));
 
-// TEST(NodeTest, StartShouldCallStartConnection) { }
-
-// TEST(NodeTest, StartConnectionShouldCreateConnection) { }
+    bool started = false;
+    co_spawn(io_context_, node_.start_connection(connection_),
+        [&](std::exception_ptr e) {
+            LOG_DEBUG << "X";
+            started = true;
+            return;
+        });
+    LOG_DEBUG << "A";
+    io_context_.run();
+    LOG_DEBUG << "B";
+    EXPECT_TRUE(started) << "Failed to start connection";
+}
 
 // TEST(NodeTest, StartConnectionShouldCallReceiveFromPeer) { }
 

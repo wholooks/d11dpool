@@ -36,7 +36,6 @@ add_executable(bp
   src/pool.cpp
   src/share.cpp
   src/work.cpp
-  src/p2p/node.cpp
   src/p2p/connection.cpp)
 
 target_link_libraries(bp PUBLIC
@@ -59,7 +58,6 @@ install(TARGETS bp DESTINATION bin)
 add_executable(pool_test
   src/share.cpp
   src/work.cpp
-  src/p2p/node.cpp
   src/p2p/connection.cpp
   ${PROJECT_SOURCE_DIR}/tests/share_test.cpp
   ${PROJECT_SOURCE_DIR}/tests/work_test.cpp
@@ -68,9 +66,9 @@ add_executable(pool_test
 
 target_link_libraries(pool_test PUBLIC
   ${Boost_LOG_SETUP_LIBRARY}
-  gtest_main
   msgpackc-cxx
   ${EXTRA_LIBS}
+  gtest gmock_main
   )
 
 target_include_directories(pool_test PUBLIC

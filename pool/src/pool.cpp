@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
     }
 
     // TODO(kp): Improve arg parsing and remove passing char ptrs
-    node node_ { std::string(argv[1]), std::string(argv[2]) };
+    tcp_socket_node node_ { std::string(argv[1]), std::string(argv[2]) };
     node_.setup_initial_peers(std::string(argv[3]), std::string(argv[4]));
 
     node_.run();

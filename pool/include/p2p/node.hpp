@@ -29,6 +29,7 @@
 
 namespace bp {
 namespace p2p {
+    template <typename socket_t, typename connection_t>
     class node : private boost::noncopyable {
     public:
         node(const std::string& listen_address, const std::string& listen_port);
@@ -39,12 +40,11 @@ namespace p2p {
             const std::string& peer_host, const std::string& peer_port);
         void run();
         void stop();
-        void add_connection(connection::ptr connection_);
-        void remove_connection(connection::ptr connection_);
+        void add_connection(connection_t::ptr connection_);
+        void remove_connection(connection_t::ptr connection_);
+        awaitable<void> start_connection(connection_t::ptr connection_);
 
     private:
-        awaitable<void> start_connection(tcp::socket client);
-
         io_context io_context_;
         std::unique_ptr<tcp::acceptor> acceptor_;
 
@@ -57,5 +57,10 @@ namespace p2p {
 
 }
 }
+
+#include <impl/p2p/node.ipp>
+
+using tcp_socket_node
+    = bp::p2p::node<boost::asio::ip::tcp::socket, bp::p2p::tcp_connection>;
 
 #endif

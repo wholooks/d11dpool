@@ -30,14 +30,19 @@ using boost::asio::use_awaitable;
 namespace bp {
 namespace p2p {
 
-    connection::connection(tcp::socket sock)
+    template <typename socket_t>
+    connection<socket_t>::connection(socket_t sock)
         : socket_(std::move(sock))
     {
     }
 
-    connection::~connection() { LOG_DEBUG << "Destroying connection"; }
+    template <typename socket_t> connection<socket_t>::~connection()
+    {
+        LOG_DEBUG << "Destroying connection";
+    }
 
-    awaitable<void> connection::send_to_peer(std::string message)
+    awaitable<void> template <typename socket_t>
+    connection<socket_t>::send_to_peer(std::string message)
     {
         try {
             LOG_DEBUG << "Sending: " << message;
@@ -48,7 +53,8 @@ namespace p2p {
         }
     }
 
-    awaitable<void> connection::receive_from_peer()
+    awaitable<void> template <typename socket_t>
+    connection<socket_t>::receive_from_peer()
     {
         try {
             for (std::string read_msg;;) {
@@ -67,6 +73,16 @@ namespace p2p {
             LOG_ERROR << "In receive_from_peer: " << e.what();
             socket_.close();
         }
+    }
+
+    awaitable<bool> template <typename socket_t> connection<socket_t>::start()
+    {
+        LOG_DEBUG << "Starting connection...";
+        auto ex = socket_.get_executor();
+        co_spawn(ex, receive_from_peer(), detached);
+        co_await send_to_peer("ping\r\n");
+        LOG_DEBUG << "Connection started";
+        co_return true;
     }
 
 }

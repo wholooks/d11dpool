@@ -17,35 +17,30 @@
  * along with braidpool.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef BP_CONNECTION_HPP
-#define BP_CONNECTION_HPP
+#ifndef BP_MESSAGE_HPP
+#define BP_MESSAGE_HPP
 
+#include "message.hpp"
+#include <boost/asio.hpp>
 #include <boost/core/noncopyable.hpp>
+#include <memory>
 #include <p2p/define.hpp>
-
-using boost::asio::awaitable;
 
 namespace bp {
 namespace p2p {
-    template <typename socket_t> class connection : private boost::noncopyable {
-    public:
-        using ptr = std::shared_ptr<connection>;
+    namespace messages {
 
-        connection(socket_t sock);
-        virtual ~connection();
-        virtual awaitable<bool> start();
+        using boost::asio::const_buffer;
 
-    private:
-        virtual awaitable<void> send_to_peer(std::string message);
-        virtual awaitable<void> receive_from_peer();
-
-        socket_t socket_;
-    };
+        /// Abstract class for all network messages.
+        ///
+        /// Provides `to_buffer` and `from_buffer` messages for serialization
+        /// and deserialization.
+        class address : private boost::noncopyable {
+            address(const_buffer& from_buffer);
+            virtual const_buffer& to_buffer();
+        };
+    }
 }
 }
-
-#include <impl/p2p/connection.ipp>
-
-using tcp_connection = bp::p2p::connection<boost::asio::ip::tcp::socket>;
-
 #endif
