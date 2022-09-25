@@ -9,7 +9,7 @@
 	//
 	
 	
-	simple Txc1
+	simple PoolNode
 	{
 	    parameters:
 	        @display("i=block/routing");
@@ -19,19 +19,19 @@
 	        inout gate[];
 	}
 	
-	network Tictoc1
+	network PoolNetwork
 	{
 	    types:
 	        channel Channel extends ned.DelayChannel {
 	            delay = 100ms;
 	    }
 	    submodules:
-	        tic[6]: Txc1;
+	        node[6]: PoolNode;
 	    connections:
-	        tic[0].gate++ <--> Channel <--> tic[1].gate++;
-	        tic[1].gate++ <--> Channel <--> tic[2].gate++;
-	        tic[1].gate++ <--> Channel <--> tic[4].gate++;
-	        tic[3].gate++ <--> Channel <--> tic[4].gate++;	
-	        tic[4].gate++ <--> Channel <--> tic[5].gate++;
+	        node[0].gate++ <--> Channel <--> node[1].gate++;
+	        node[1].gate++ <--> Channel <--> node[2].gate++;
+	        node[1].gate++ <--> Channel <--> node[4].gate++;
+	        node[3].gate++ <--> Channel <--> node[4].gate++;	
+	        node[4].gate++ <--> Channel <--> node[5].gate++;
 	}
 	
