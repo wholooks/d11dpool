@@ -5,6 +5,7 @@
     #include <stdio.h>
     #include <string.h>
     #include <omnetpp.h>
+    #include "pool_message_m.h"
 
     using namespace omnetpp;
 
@@ -32,7 +33,7 @@
         // Boot the process scheduling the initial message as a self-message.
         char msgname[20];
         sprintf(msgname, "share-%d", getIndex());
-        cMessage *msg = new cMessage(msgname);
+        PoolMessage *msg = new PoolMessage(msgname);
         scheduleAt(initial_delay_multiplier * getIndex(), msg);
     }
 
@@ -50,9 +51,10 @@
 
     bool PoolNode::shouldForward(cMessage *msg, int index)
     {
-        if (msg->isSelfMessage())
+        PoolMessage *pool_msg = check_and_cast<PoolMessage *>(msg);
+        if (pool_msg->isSelfMessage())
                 return true;
-        auto received_from = msg->getArrivalGate();
+        auto received_from = pool_msg->getArrivalGate();
         double roll = uniform(0, 1);
         return (gate("gate$i", index) != received_from &&
                 (roll <= forwarding_probability));
