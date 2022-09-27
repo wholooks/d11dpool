@@ -2,12 +2,16 @@
 // This file builds on the tictoc example from the omnetpp source code.
 //
 
-    #include <stdio.h>
-    #include <string.h>
-    #include <omnetpp.h>
-    #include "pool_message_m.h"
+#include <stdio.h>
+#include <string.h>
+#include <set>
+#include <omnetpp.h>
+#include "pool_message_m.h"
+#include "PoolMessageComparator.h"
 
-    using namespace omnetpp;
+using namespace omnetpp;
+
+using MessageSet = std::set<PoolMessage*, PoolMessageComparator>;
 
     /**
      * Node in the simulation
@@ -19,6 +23,9 @@
         int initialDelayMultiplier;
         int maxNumHops;
         int nextSequenceNumber = 0;
+        MessageSet receivedMessages{};
+
+
         virtual void sendCopyOf(PoolMessage *msg, int index);
         virtual void processMessage(PoolMessage *msg);
         virtual bool shouldForward(PoolMessage *msg, int index);
@@ -26,6 +33,8 @@
         virtual void handleMessage(cMessage *msg) override;
         virtual void sendFirstMessage();
         virtual PoolMessage* generateNextMessage();
+
+        virtual void addToReceivedMessages(PoolMessage*);
     };
 
     Define_Module(PoolNode);
@@ -82,8 +91,13 @@
                 (roll <= forwardingProbability));
     }
 
+    void PoolNode::addToReceivedMessages(PoolMessage* pool_msg){
+        receivedMessages.insert(pool_msg->dup());
+    }
+
     void PoolNode::processMessage(PoolMessage *pool_msg)
     {
+        addToReceivedMessages(pool_msg);
         // loop over all gates and send message out on each.
         auto num_gates = gateSize("gate$o") - 1;
         for (auto index = 0; index <= num_gates; index++){

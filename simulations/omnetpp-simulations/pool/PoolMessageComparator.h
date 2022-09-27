@@ -11,7 +11,7 @@
 class PoolMessageComparator {
 public:
     bool operator()(PoolMessage* a, PoolMessage* b){
-        return a->getSequenceNumber() < b.getSequenceNumber();
+        return a->getSequenceNumber() < b->getSequenceNumber();
     }
 };
 
