@@ -13,9 +13,9 @@
 	{
 	    parameters:
 	        @display("i=block/routing");
-	        double forwarding_probability = default(1.0);
-	        int initial_delay_multiplier = default(1000);
-	        int max_num_hops = default(2);
+	        double forwardingProbability = default(1.0);
+	        int initialDelayMultiplier = default(1000);
+	        int maxNumHops = default(2);
 	    gates:
 	        inout gate[];
 	}

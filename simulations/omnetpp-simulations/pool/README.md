@@ -46,13 +46,12 @@ randomised within a range.
 ## Handle receieved message
 
 1. Spend $Sms$ processing the message.
-2. Add received message to a DAG of messages.
+2. [TODO] Add received message to a DAG of messages.
+   1. [TODO] Use a simple set as the first pass.
 3. For any message refefenced in received message that the node
    doesn't have, append a NACK for the message to the $nack_list$.
 4. [DONE] Forward the received message to all neighbours with probability $p$.
-   1. [TODO] Use hop counts instead. 
-   2. [TODO] Add param to choose between probabilistic and hop count
-      based forwarding scheme.
+   1. [DONE] Use hop counts instead. 
    
       
 ## Sending NACKs

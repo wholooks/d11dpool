@@ -177,6 +177,7 @@ void PoolMessage::copy(const PoolMessage& other)
 {
     this->source = other.source;
     this->destination = other.destination;
+    this->sequenceNumber = other.sequenceNumber;
     this->hopCount = other.hopCount;
 }
 
@@ -185,6 +186,7 @@ void PoolMessage::parsimPack(omnetpp::cCommBuffer *b) const
     ::omnetpp::cMessage::parsimPack(b);
     doParsimPacking(b,this->source);
     doParsimPacking(b,this->destination);
+    doParsimPacking(b,this->sequenceNumber);
     doParsimPacking(b,this->hopCount);
 }
 
@@ -193,6 +195,7 @@ void PoolMessage::parsimUnpack(omnetpp::cCommBuffer *b)
     ::omnetpp::cMessage::parsimUnpack(b);
     doParsimUnpacking(b,this->source);
     doParsimUnpacking(b,this->destination);
+    doParsimUnpacking(b,this->sequenceNumber);
     doParsimUnpacking(b,this->hopCount);
 }
 
@@ -216,6 +219,16 @@ void PoolMessage::setDestination(int destination)
     this->destination = destination;
 }
 
+int PoolMessage::getSequenceNumber() const
+{
+    return this->sequenceNumber;
+}
+
+void PoolMessage::setSequenceNumber(int sequenceNumber)
+{
+    this->sequenceNumber = sequenceNumber;
+}
+
 int PoolMessage::getHopCount() const
 {
     return this->hopCount;
@@ -233,6 +246,7 @@ class PoolMessageDescriptor : public omnetpp::cClassDescriptor
     enum FieldConstants {
         FIELD_source,
         FIELD_destination,
+        FIELD_sequenceNumber,
         FIELD_hopCount,
     };
   public:
@@ -300,7 +314,7 @@ const char *PoolMessageDescriptor::getProperty(const char *propertyName) const
 int PoolMessageDescriptor::getFieldCount() const
 {
     omnetpp::cClassDescriptor *base = getBaseClassDescriptor();
-    return base ? 3+base->getFieldCount() : 3;
+    return base ? 4+base->getFieldCount() : 4;
 }
 
 unsigned int PoolMessageDescriptor::getFieldTypeFlags(int field) const
@@ -314,9 +328,10 @@ unsigned int PoolMessageDescriptor::getFieldTypeFlags(int field) const
     static unsigned int fieldTypeFlags[] = {
         FD_ISEDITABLE,    // FIELD_source
         FD_ISEDITABLE,    // FIELD_destination
+        FD_ISEDITABLE,    // FIELD_sequenceNumber
         FD_ISEDITABLE,    // FIELD_hopCount
     };
-    return (field >= 0 && field < 3) ? fieldTypeFlags[field] : 0;
+    return (field >= 0 && field < 4) ? fieldTypeFlags[field] : 0;
 }
 
 const char *PoolMessageDescriptor::getFieldName(int field) const
@@ -330,9 +345,10 @@ const char *PoolMessageDescriptor::getFieldName(int field) const
     static const char *fieldNames[] = {
         "source",
         "destination",
+        "sequenceNumber",
         "hopCount",
     };
-    return (field >= 0 && field < 3) ? fieldNames[field] : nullptr;
+    return (field >= 0 && field < 4) ? fieldNames[field] : nullptr;
 }
 
 int PoolMessageDescriptor::findField(const char *fieldName) const
@@ -341,7 +357,8 @@ int PoolMessageDescriptor::findField(const char *fieldName) const
     int baseIndex = base ? base->getFieldCount() : 0;
     if (strcmp(fieldName, "source") == 0) return baseIndex + 0;
     if (strcmp(fieldName, "destination") == 0) return baseIndex + 1;
-    if (strcmp(fieldName, "hopCount") == 0) return baseIndex + 2;
+    if (strcmp(fieldName, "sequenceNumber") == 0) return baseIndex + 2;
+    if (strcmp(fieldName, "hopCount") == 0) return baseIndex + 3;
     return base ? base->findField(fieldName) : -1;
 }
 
@@ -356,9 +373,10 @@ const char *PoolMessageDescriptor::getFieldTypeString(int field) const
     static const char *fieldTypeStrings[] = {
         "int",    // FIELD_source
         "int",    // FIELD_destination
+        "int",    // FIELD_sequenceNumber
         "int",    // FIELD_hopCount
     };
-    return (field >= 0 && field < 3) ? fieldTypeStrings[field] : nullptr;
+    return (field >= 0 && field < 4) ? fieldTypeStrings[field] : nullptr;
 }
 
 const char **PoolMessageDescriptor::getFieldPropertyNames(int field) const
@@ -443,6 +461,7 @@ std::string PoolMessageDescriptor::getFieldValueAsString(omnetpp::any_ptr object
     switch (field) {
         case FIELD_source: return long2string(pp->getSource());
         case FIELD_destination: return long2string(pp->getDestination());
+        case FIELD_sequenceNumber: return long2string(pp->getSequenceNumber());
         case FIELD_hopCount: return long2string(pp->getHopCount());
         default: return "";
     }
@@ -462,6 +481,7 @@ void PoolMessageDescriptor::setFieldValueAsString(omnetpp::any_ptr object, int f
     switch (field) {
         case FIELD_source: pp->setSource(string2long(value)); break;
         case FIELD_destination: pp->setDestination(string2long(value)); break;
+        case FIELD_sequenceNumber: pp->setSequenceNumber(string2long(value)); break;
         case FIELD_hopCount: pp->setHopCount(string2long(value)); break;
         default: throw omnetpp::cRuntimeError("Cannot set field %d of class 'PoolMessage'", field);
     }
@@ -479,6 +499,7 @@ omnetpp::cValue PoolMessageDescriptor::getFieldValue(omnetpp::any_ptr object, in
     switch (field) {
         case FIELD_source: return pp->getSource();
         case FIELD_destination: return pp->getDestination();
+        case FIELD_sequenceNumber: return pp->getSequenceNumber();
         case FIELD_hopCount: return pp->getHopCount();
         default: throw omnetpp::cRuntimeError("Cannot return field %d of class 'PoolMessage' as cValue -- field index out of range?", field);
     }
@@ -498,6 +519,7 @@ void PoolMessageDescriptor::setFieldValue(omnetpp::any_ptr object, int field, in
     switch (field) {
         case FIELD_source: pp->setSource(omnetpp::checked_int_cast<int>(value.intValue())); break;
         case FIELD_destination: pp->setDestination(omnetpp::checked_int_cast<int>(value.intValue())); break;
+        case FIELD_sequenceNumber: pp->setSequenceNumber(omnetpp::checked_int_cast<int>(value.intValue())); break;
         case FIELD_hopCount: pp->setHopCount(omnetpp::checked_int_cast<int>(value.intValue())); break;
         default: throw omnetpp::cRuntimeError("Cannot set field %d of class 'PoolMessage'", field);
     }

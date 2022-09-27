@@ -27,6 +27,7 @@ class PoolMessage;
  * {
  *     int source;
  *     int destination;
+ *     int sequenceNumber = 0;
  *     int hopCount = 0;
  * }
  * </pre>
@@ -36,6 +37,7 @@ class PoolMessage : public ::omnetpp::cMessage
   protected:
     int source = 0;
     int destination = 0;
+    int sequenceNumber = 0;
     int hopCount = 0;
 
   private:
@@ -58,6 +60,9 @@ class PoolMessage : public ::omnetpp::cMessage
 
     virtual int getDestination() const;
     virtual void setDestination(int destination);
+
+    virtual int getSequenceNumber() const;
+    virtual void setSequenceNumber(int sequenceNumber);
 
     virtual int getHopCount() const;
     virtual void setHopCount(int hopCount);

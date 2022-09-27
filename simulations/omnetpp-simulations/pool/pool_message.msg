@@ -20,5 +20,6 @@ message PoolMessage
 {
     int source;
     int destination;
+    int sequenceNumber = 0;
 	int hopCount = 0;
 }
