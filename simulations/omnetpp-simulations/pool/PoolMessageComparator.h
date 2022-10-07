@@ -2,7 +2,7 @@
  * PoolMessageComparator.h
  *
  *  Created on: Sep 27, 2022
- *      Author: kulpreet
+ *      Author: pool2win
  */
 
 #ifndef POOLMESSAGECOMPARATOR_H_

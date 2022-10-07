@@ -16,10 +16,19 @@
 //
 // Message representing a share broadcast by a miner
 //
+
+
+
+struct pool_message_reference {
+    int source;
+    int sequenceNumber;
+}
+
 message PoolMessage
 {
     int source;
     int destination;
     int sequenceNumber = 0;
 	int hopCount = 0;
+	pool_message_reference ref[];
 }

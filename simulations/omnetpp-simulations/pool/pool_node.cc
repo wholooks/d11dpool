@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <set>
+#include <map>
 #include <omnetpp.h>
 #include "pool_message_m.h"
 #include "PoolMessageComparator.h"
@@ -12,6 +13,7 @@
 using namespace omnetpp;
 
 using MessageSet = std::set<PoolMessage*, PoolMessageComparator>;
+using SenderSequenceNumberMap = std::map<int, int>;
 
     /**
      * Node in the simulation
@@ -24,6 +26,7 @@ using MessageSet = std::set<PoolMessage*, PoolMessageComparator>;
         int maxNumHops;
         int nextSequenceNumber = 0;
         MessageSet receivedMessages{};
+        SenderSequenceNumberMap senderLastSequenceNumber{};
 
 
         virtual void sendCopyOf(PoolMessage *msg, int index);
@@ -35,6 +38,7 @@ using MessageSet = std::set<PoolMessage*, PoolMessageComparator>;
         virtual PoolMessage* generateNextMessage();
 
         virtual void addToReceivedMessages(PoolMessage*);
+        virtual void updateSenderLastSequenceNumber(int sender, int seqNo);
     };
 
     Define_Module(PoolNode);
@@ -91,8 +95,14 @@ using MessageSet = std::set<PoolMessage*, PoolMessageComparator>;
                 (roll <= forwardingProbability));
     }
 
+    void PoolNode::updateSenderLastSequenceNumber(int sender, int seqNo){
+        senderLastSequenceNumber[sender] = seqNo;
+        EV << "From sender: " << sender << " last sequence number: " << seqNo << "\n";
+    }
+
     void PoolNode::addToReceivedMessages(PoolMessage* pool_msg){
         receivedMessages.insert(pool_msg->dup());
+        updateSenderLastSequenceNumber(pool_msg->getArrivalGateId(), pool_msg->getSequenceNumber());
     }
 
     void PoolNode::processMessage(PoolMessage *pool_msg)
