@@ -67,9 +67,9 @@ using SenderSequenceNumberMap = std::map<int, int>;
         forwardingProbability = par("forwardingProbability");
         initialDelayMultiplier = par("initialDelayMultiplier");
         maxNumHops = par("maxNumHops");
-        if (getIndex() == 0) {
+//        if (getIndex() == 0) {
             sendFirstMessage();
-        }
+//        }
     }
 
     void PoolNode::handleMessage(cMessage *msg)
