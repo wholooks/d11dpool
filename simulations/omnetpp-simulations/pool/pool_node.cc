@@ -12,7 +12,11 @@
 
 using namespace omnetpp;
 
-using MessageSet = std::set<PoolMessage*, PoolMessageComparator>;
+auto cmp = [](PoolMessage* a, PoolMessage* b) {
+    return a->getSenderGate() < b->getSenderGate() ||
+            a->getSequenceNumber() < b->getSequenceNumber();
+};
+using MessageSet = std::set<PoolMessage*, decltype(cmp)>;
 using SenderSequenceNumberMap = std::map<int, int>;
 
     /**
@@ -25,7 +29,7 @@ using SenderSequenceNumberMap = std::map<int, int>;
         int initialDelayMultiplier;
         int maxNumHops;
         int nextSequenceNumber = 0;
-        MessageSet receivedMessages{};
+        MessageSet receivedMessages{cmp};
         SenderSequenceNumberMap senderLastSequenceNumber{};
 
 
@@ -102,6 +106,7 @@ using SenderSequenceNumberMap = std::map<int, int>;
 
     void PoolNode::addToReceivedMessages(PoolMessage* pool_msg){
         receivedMessages.insert(pool_msg->dup());
+        EV << "Received messages now " << receivedMessages.size() << "\n";
         updateSenderLastSequenceNumber(pool_msg->getArrivalGateId(), pool_msg->getSequenceNumber());
     }
 
