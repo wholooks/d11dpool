@@ -48,10 +48,12 @@ randomised within a range.
 1. Spend $Sms$ processing the message.
 2. [TODO] Add received message to a DAG of messages.
    1. [DONE] Use a simple map as the first pass. Map sender -> set of received messages.
-3. For any message refefenced in received message that the node
+3. [TODO] Include reference to latest receieved message from all nodes
+   4. latest or highest seqno or highest seqno with no holes
+4. For any message refefenced in received message that the node
    doesn't have, append a NACK for the message to the $nack_list$.
    1. [TODO] Find any messages referenced in received message that we have received
-4. [DONE] Forward the received message to all neighbours with probability $p$.
+5. [DONE] Forward the received message to all neighbours with probability $p$.
    1. [DONE] Use hop counts instead. 
    
       

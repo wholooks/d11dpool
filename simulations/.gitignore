@@ -1,0 +1,4 @@
+output.prof
+__pycache__
+.pytest_cache
+logs
